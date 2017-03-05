@@ -1,0 +1,61 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'etri'
+version = '1.0'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+[compileJava,compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+	mavenCentral()
+	maven {
+		name = 'dist'
+		url = "file:${distRepositoryDir}"
+	}
+}
+
+dependencies {
+	childProjects.values().each { compile it }
+	
+	compile fileTree(dir: 'c:/local/opencv/java', include: '*.jar')
+	compile "com.google.inject:guice:4.1.0"
+	compile "com.fasterxml.jackson.core:jackson-databind:2.8.7"
+	compile "org.apache.commons:commons-lang3:3.5"
+	
+}
+
+task sourceJar(type: Jar) {
+	classifier 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+	classifier 'javadoc'
+	from javadoc.destinationDir
+}
+
+artifacts {
+	archives sourceJar
+	archives javadocJar
+}
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			repository(url: "file:${distRepositoryDir}")
+		}
+	}
+}
+
+apply plugin: 'eclipse'
+eclipse {
+	classpath {
+		file {
+			withXml {
+				def node = it.asNode()
+				node.appendNode('classpathentry', [kind: 'output', path: 'classes'])
+			}
+		}
+	}
+}
