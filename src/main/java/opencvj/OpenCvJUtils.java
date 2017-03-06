@@ -1,7 +1,10 @@
 package opencvj;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,18 +25,12 @@ import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Range;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 
-import opencvj.camera.FlipCode;
 import opencvj.camera.OpenCvJCamera;
-import opencvj.camera.OpenCvJDepthCamera;
 import opencvj.misc.PerspectiveTransform;
 
 
@@ -42,16 +39,8 @@ import opencvj.misc.PerspectiveTransform;
  * @author Kang-Woo Lee
  */
 public final class OpenCvJUtils {
-	private static final ObjectMapper OM = new ObjectMapper();
-	static {
-		OM.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		OM.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-		OM.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-	}
-	
 	private OpenCvJUtils() {
-		throw new AssertionError("Should not be called this one: "
-								+ OpenCvJUtils.class);
+		throw new AssertionError("Should not be called this one: " + OpenCvJUtils.class);
 	}
 	
 	public static <T> T readJsonValue(String jsonStr, Class<T> type)
@@ -64,11 +53,14 @@ public final class OpenCvJUtils {
 		}
 	}
 	
-	public static JsonNode readJsonFile(File jsonFile) throws JsonProcessingException, IOException {
-		return OM.readTree(jsonFile);
+	public static JsonElement readJsonFile(File jsonFile) throws FileNotFoundException, IOException {
+		try ( Reader reader = new FileReader(jsonFile) ) {
+			JsonElement jsonElm = new JsonParser().parse(reader);
+			return 
+		}
 	}
 	
-	public static JsonNode readJsonFile(String jsonStr) throws JsonProcessingException, IOException {
+	public static JsonElement readJsonFile(String jsonStr) throws JsonProcessingException, IOException {
 		return OM.readTree(jsonStr);
 	}
 	
