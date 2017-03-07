@@ -10,10 +10,11 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
-import opencvj.Config;
+import config.Config;
 import opencvj.Mats;
 import opencvj.OpenCvJ;
 import opencvj.OpenCvJSystem;
+import opencvj.OpenCvJUtils;
 import utils.UninitializedException;
 
 
@@ -26,6 +27,7 @@ public class MADepthForegroundDetector extends AbstractDeltaAwareForegroundDetec
 	public static final int BG_MODEL_VALID_VALID = 0x01;
 	public static final int BG_MODEL_INVALID_VALID = 0x02;
 	public static final int BG_MODEL_ANY_INVALID = 0x04;
+	private static final IntRange DEFAULT_VALID_DEPTH = new IntRange(1, Short.MAX_VALUE);
 	
 	public static class Params {
 		IntRange validDepthRange = new IntRange(1, Short.MAX_VALUE);
@@ -34,14 +36,13 @@ public class MADepthForegroundDetector extends AbstractDeltaAwareForegroundDetec
 		
 		public static Params create(Config config) {
 			Params params = new Params();
-			
-			if ( config.hasChild("valid_depth") ) {
-				params.validDepthRange = config.get("valid_depth").asIntRange();
-			}
-			params.backgroundDepthDelta = config.get("bg_depth_delta").asIntRange();
-			if ( config.hasChild("fg_model_flags") ) {
-				params.fgModelFlags = config.get("fg_model_flags").asInt();
-			}
+
+			params.validDepthRange = OpenCvJUtils.asIntRange(config.getMember("valid_depth"),
+															DEFAULT_VALID_DEPTH);
+			params.backgroundDepthDelta = OpenCvJUtils.asIntRange(
+														config.getMember("bg_depth_delta"), null);
+			params.fgModelFlags = config.getMember("fg_model_flags")
+										.asInt(BG_MODEL_VALID_VALID + BG_MODEL_INVALID_VALID);
 			
 			return params;
 		}

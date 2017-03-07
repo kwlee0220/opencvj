@@ -9,7 +9,7 @@ import camus.service.image.Color;
 import org.apache.commons.cli.Option;
 import org.opencv.core.Mat;
 
-import opencvj.Config;
+import opencvj.OpenCvJConfig;
 import opencvj.Mats;
 import opencvj.OpenCvJSystem;
 import opencvj.OpenCvView;
@@ -50,7 +50,7 @@ public class TestOpenCvJCamera {
 	    
         TestOpenCvJ.initialize(homeDir);
         
-        Config config = OpenCvJSystem.getConfig(cl.getOptionValue("camera", "highgui"));
+        OpenCvJConfig config = OpenCvJSystem.getConfigNode(cl.getOptionValue("camera", "highgui"));
 //        Config config = OpenCvJSystem.getConfig(cl.getOptionValue("camera", "xtion.depth")); 
 //      Config config = OpenCvJSystem.getConfig(cl.getOptionValue("camera", "xtion.color"));
         

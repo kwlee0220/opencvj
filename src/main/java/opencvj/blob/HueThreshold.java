@@ -5,7 +5,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-import opencvj.Config;
+import config.Config;
 import opencvj.OpenCvJException;
 import opencvj.OpenCvJUtils;
 
@@ -26,8 +26,8 @@ public class HueThreshold implements ImageThreshold {
 	
 	public static HueThreshold create(Config config) {
 		HueThreshold threshold = new HueThreshold();
-		threshold.setUpperHSV(config.get("upper_hsv").asScalar());
-		threshold.setLowerHSV(config.get("lower_hsv").asScalar());
+		threshold.setUpperHSV(OpenCvJUtils.asScalar(config.getMember("upper_hsv"), null));
+		threshold.setLowerHSV(OpenCvJUtils.asScalar(config.getMember("lower_hsv"), null));
 		
 		return threshold;
 	}

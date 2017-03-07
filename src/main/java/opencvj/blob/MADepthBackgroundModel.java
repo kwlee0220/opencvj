@@ -8,7 +8,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-import opencvj.Config;
+import config.Config;
 import opencvj.Mats;
 import opencvj.OpenCvJUtils;
 

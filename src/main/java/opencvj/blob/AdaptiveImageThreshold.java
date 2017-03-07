@@ -4,7 +4,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
-import opencvj.Config;
+import config.Config;
 import opencvj.OpenCvJException;
 
 
@@ -27,9 +27,10 @@ public class AdaptiveImageThreshold implements ImageThreshold {
 	
 	public static AdaptiveImageThreshold create(Config config) {
 		AdaptiveImageThreshold threshold = new AdaptiveImageThreshold();
-		threshold.setBlockSize(config.get("block_size").asInt(DEFAULT_BLOCK_SIZE));
-		threshold.setSubtractionConstant(config.get("subtraction_constant").asInt(DEFAULT_SUBTRACTION_CONSTANT));
-		threshold.setThresholdType(config.get("threshold_type").asInt(DEF_THRESHOLD_TYPE));
+		threshold.setBlockSize(config.getMember("block_size").asInt(DEFAULT_BLOCK_SIZE));
+		threshold.setSubtractionConstant(config.getMember("subtraction_constant")
+												.asInt(DEFAULT_SUBTRACTION_CONSTANT));
+		threshold.setThresholdType(config.getMember("threshold_type").asInt(DEF_THRESHOLD_TYPE));
 		
 		return threshold;
 	}

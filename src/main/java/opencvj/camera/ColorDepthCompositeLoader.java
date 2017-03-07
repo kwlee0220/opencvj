@@ -1,6 +1,6 @@
 package opencvj.camera;
 
-import opencvj.Config;
+import config.Config;
 
 
 /**

@@ -14,9 +14,10 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 
-import opencvj.Config;
+import config.Config;
 import opencvj.Mats;
 import opencvj.OpenCvJ;
+import opencvj.OpenCvJUtils;
 import opencvj.OpenCvViewManager;
 import opencvj.camera.OpenCvJCamera;
 import utils.io.IOUtils;
@@ -79,7 +80,7 @@ public final class Blobs {
 											Config config, Logger logger) {
 		int nframes = 0;
 		
-		long learningMillis = config.traverse("period").asDuration("0");
+		long learningMillis = config.traverse("period").asDuration(0).asMillis();
 		if ( learningMillis > 0 ) {
 			if ( logger != null && logger.isInfoEnabled() ) {
 				logger.info("learning depth background: period=" + config.traverse("period").asString());
@@ -132,7 +133,7 @@ public final class Blobs {
 	}
 	
 	public static BlobFilter newSizeRangeBlobFilter(Config config, boolean ignoreHoles) {
-		return new SizeRangeFilter(config.asSizeRange(), ignoreHoles);
+		return new SizeRangeFilter(OpenCvJUtils.asSizeRange(config, null), ignoreHoles);
 	}
 	
 	private static class SizeRangeFilter implements BlobFilter {

@@ -7,7 +7,7 @@ import org.opencv.highgui.VideoCapture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import opencvj.Config;
+import config.Config;
 import opencvj.OpenCvJException;
 import opencvj.OpenCvJLoader;
 import opencvj.OpenCvJUtils;
@@ -29,7 +29,7 @@ public class HighGuiCamera implements OpenCvJCamera, Initializable {
     	
     	public Params(Config config) {
     		deviceIndex = config.get("device_index").asInt(DEF_DEVICE_INDEX);
-    		imageSize = config.get("image_size").asSize();
+    		imageSize = OpenCvJUtils.asSize(config.get("image_size"), null);
     	}
     }
     
@@ -60,9 +60,9 @@ public class HighGuiCamera implements OpenCvJCamera, Initializable {
 		m_config = config;
 	}
 	
-	public final void setConfig(String configStr) {
-		m_config = new Config(configStr);
-	}
+//	public final void setConfig(String configStr) {
+//		m_config = new OpenCvJConfig(configStr);
+//	}
 	
 	public final void setParams(Params params) {
 		m_params = params;

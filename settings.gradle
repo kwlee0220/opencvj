@@ -1,6 +1,6 @@
 rootProject.name = 'opencvj'
 
-['utils', 'event', 'planet', 'camus.model'].each {
+['utils', 'configuration', 'event', 'planet', 'camus.model'].each {
 	include ":$it"
 	project(":$it").projectDir = file("../$it")
 }

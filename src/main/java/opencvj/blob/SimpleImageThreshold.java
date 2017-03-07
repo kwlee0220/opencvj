@@ -3,7 +3,7 @@ package opencvj.blob;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
-import opencvj.Config;
+import config.Config;
 import opencvj.OpenCvJException;
 
 
@@ -22,8 +22,8 @@ public class SimpleImageThreshold implements ImageThreshold {
 	
 	public static SimpleImageThreshold create(Config config) {
 		SimpleImageThreshold threshold = new SimpleImageThreshold();
-		threshold.setIntensity(config.get("intensity_threshold").asInt(DEF_INTENSITY_THRESHOLD));
-		threshold.setThresholdType(config.get("threshold_type").asInt(DEF_THRESHOLD_TYPE));
+		threshold.setIntensity(config.getAsInt("intensity_threshold", DEF_INTENSITY_THRESHOLD));
+		threshold.setThresholdType(config.getAsInt("threshold_type", DEF_THRESHOLD_TYPE));
 		
 		return threshold;
 	}

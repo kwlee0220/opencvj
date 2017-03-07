@@ -1,10 +1,13 @@
 package opencvj;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import config.Config;
+import config.json.JsonConfig;
 import opencvj.blob.AdaptiveImageThreshold;
 import opencvj.blob.BackgroundModel;
 import opencvj.blob.DeltaAwareForegroundDetector;
@@ -57,7 +60,8 @@ public final class OpenCvJSystem {
 		throw new AssertionError("Should not be called this one: " + OpenCvJSystem.class);
 	}
 	
-	public static void initialize(File homeDir, String configFileName) {
+	public static void initialize(File homeDir, String configFileName)
+														throws FileNotFoundException, IOException {
 		if ( homeDir == null ) {
 			String homePath = System.getenv("OPENCVJ_HOME");
 			if ( homePath == null ) {
@@ -80,7 +84,7 @@ public final class OpenCvJSystem {
 		
 		CONFIG_DIR = new File(getHomeDir(), "configs");
 		String fname = configFileName != null ? configFileName : "opencvj.conf";
-		ROOT_CONFIG = new Config(new File(getConfigDir(), fname));
+		ROOT_CONFIG = JsonConfig.loadConfigFile(new File(getConfigDir(), fname));
 		ROOT_CONFIG.addVariable("home.dir", HOME_DIR.getAbsolutePath());
 		
 		try {
@@ -124,7 +128,7 @@ public final class OpenCvJSystem {
 		return ROOT_CONFIG;
 	}
 	
-	public static Config getConfig(String path) {
+	public static Config getConfigNode(String path) {
 		return getRootConfig().traverse(path);
 	}
 	
@@ -200,8 +204,7 @@ public final class OpenCvJSystem {
 		return CDCFactory.create(cdc, config);
 	}
 	
-	private static final ColorDepthComposite createCDC(Config config)
-		throws Exception {
+	private static final ColorDepthComposite createCDC(Config config) throws Exception {
 		String type = config.get("type").asString(null);
 		ColorDepthCompositeLoader loader = CDC_LOADERS.get(type);
 		if ( loader != null ) {
@@ -236,7 +239,7 @@ public final class OpenCvJSystem {
 	public static BackgroundModel createBackgroundModel(Config config) {
 		BackgroundModel bgModel;
 		
-		String type = config.get("type").asString();
+		String type = config.get("type").asString(null);
 		if ( type.equals("mvavg_depth") ) {
 			bgModel = MADepthBackgroundModel.create(config);
 		}
@@ -253,7 +256,7 @@ public final class OpenCvJSystem {
 	
 	public static BackgroundModel getBackgroundModel(Config config) {
 		Config bgModelConfig = config.get("bgmodel");
-		bgModelConfig = (bgModelConfig.isMissing()) ? config : bgModelConfig.asReference();
+		bgModelConfig = (bgModelConfig == null) ? config : bgModelConfig.asReference();
 		BackgroundModel bgModel = BG_MODELS.get(bgModelConfig.getPath());
 		if ( bgModel == null ) {
 			bgModel = createBackgroundModel(bgModelConfig);

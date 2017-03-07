@@ -14,7 +14,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import opencvj.Config;
+import config.Config;
 import opencvj.Mats;
 import opencvj.OpenCvJException;
 
@@ -39,13 +39,14 @@ public class BlobExtractor {
 	public static BlobExtractor create(Config config) {
 		BlobExtractor ext = new BlobExtractor();
 
-		ext.m_approx_poly_epsilon = config.get("approx_poly_epsilon").asFloat(0);
-		ext.m_morph_action = MorphAction.from(config.get("morph_action"), MorphAction.MORPH_ACT_NONE);
-		ext.m_contour_mode = parseContourMode(config.get("contour_mode").asString("list"));
+		ext.m_approx_poly_epsilon = config.getMember("approx_poly_epsilon").asFloat(0);
+		ext.m_morph_action = MorphAction.from(config.getMember("morph_action"),
+												MorphAction.MORPH_ACT_NONE);
+		ext.m_contour_mode = parseContourMode(config.getMember("contour_mode").asString("list"));
 		
-		boolean ignoreHoles = config.get("ignore_hole").asBoolean(true);
-		Config sizeConfig = config.get("size");
-		if ( sizeConfig.isContainer() ) {
+		boolean ignoreHoles = config.getMember("ignore_hole").asBoolean(true);
+		Config sizeConfig = config.getMember("size");
+		if ( sizeConfig.isMap() ) {
 			ext.setFilter(Blobs.newSizeRangeBlobFilter(sizeConfig, ignoreHoles));
 		}
 		

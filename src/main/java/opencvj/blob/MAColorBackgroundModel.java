@@ -6,7 +6,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 
-import opencvj.Config;
+import config.Config;
 import opencvj.Mats;
 import opencvj.OpenCvJ;
 import opencvj.OpenCvJException;
@@ -22,7 +22,7 @@ public class MAColorBackgroundModel implements BackgroundModel {
 	private final float m_updateRate;
 	
 	public static MAColorBackgroundModel create(Config config) {
-		return new MAColorBackgroundModel(config.get("update_rate").asFloat());
+		return new MAColorBackgroundModel(config.getMember("update_rate").asFloat());
 	}
 	
 	public MAColorBackgroundModel(float updateRate) {

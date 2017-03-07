@@ -11,8 +11,9 @@ import org.apache.log4j.Logger;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
+import config.Config;
 import net.jcip.annotations.GuardedBy;
-import opencvj.Config;
+import utils.Duration;
 import utils.Initializable;
 import utils.UninitializedException;
 import utils.Utilities;
@@ -26,7 +27,7 @@ import utils.thread.ExecutorAware;
  */
 public class OpenCvJCameraFactoryImpl implements OpenCvJCameraFactory, Initializable, ExecutorAware {
 	private static final Logger s_logger = Logger.getLogger("RESULT_SHARING");
-	private static final String MAX_CAPTURE_WAIT = "3s";
+	private static final Duration MAX_CAPTURE_WAIT = Duration.parseDuration("3s");
 
 	// properties (BEGIN)
 	private volatile OpenCvJCamera m_source;
@@ -71,9 +72,9 @@ public class OpenCvJCameraFactoryImpl implements OpenCvJCameraFactory, Initializ
 		m_config = config;
 	}
 	
-	public final void setConfig(String configStr) {
-		m_config = new Config(configStr);
-	}
+//	public final void setConfig(String configStr) {
+//		m_config = new Config(configStr);
+//	}
 
 	@Override
 	public void setExecutor(Executor executor) {
@@ -91,8 +92,8 @@ public class OpenCvJCameraFactoryImpl implements OpenCvJCameraFactory, Initializ
 					+ getClass().getName());
 		}
 		
-		m_maxWaitMillis = m_config.get("max_capture_wait").asDuration(MAX_CAPTURE_WAIT);
-		m_interval = m_config.get("capture_interval").asDuration();
+		m_maxWaitMillis = m_config.get("max_capture_wait").asDuration(MAX_CAPTURE_WAIT).asMillis();
+		m_interval = m_config.get("capture_interval").asDuration().asMillis();
 	}
 	
 	public void destroy() {

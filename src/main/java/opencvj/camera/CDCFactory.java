@@ -11,8 +11,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
+import config.Config;
 import net.jcip.annotations.GuardedBy;
-import opencvj.Config;
 import utils.CheckedSupplier;
 import utils.Initializable;
 import utils.UninitializedException;
@@ -88,9 +88,9 @@ public class CDCFactory implements ColorDepthCompositeFactory, ExecutorAware, In
 		m_config = config;
 	}
 	
-	public final void setConfig(String configStr) {
-		m_config = new Config(configStr);
-	}
+//	public final void setConfig(String configStr) {
+//		m_config = new OpenCvJConfig(configStr);
+//	}
 
 	@Override
 	public void setExecutor(Executor executor) {
@@ -110,7 +110,7 @@ public class CDCFactory implements ColorDepthCompositeFactory, ExecutorAware, In
 		
 		Config maxWaitConfig = m_config.get("max_capture_wait");
 		if ( !maxWaitConfig.isMissing() ) {
-			m_sharedImageSupplier.setMaxWaitMillis(maxWaitConfig.asDuration());
+			m_sharedImageSupplier.setMaxWaitMillis(maxWaitConfig.asDuration().asMillis());
 		}
 		
 		m_colorFact = OpenCvJCameraFactoryImpl.create(m_source.getColorCamera(),
