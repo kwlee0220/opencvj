@@ -256,7 +256,7 @@ public final class OpenCvJSystem {
 	
 	public static BackgroundModel getBackgroundModel(ConfigNode config) {
 		ConfigNode bgModelConfig = config.get("bgmodel");
-		bgModelConfig = (bgModelConfig == null) ? config : bgModelConfig.asReference();
+		bgModelConfig = (bgModelConfig.isMissing()) ? config : bgModelConfig.asReference();
 		BackgroundModel bgModel = BG_MODELS.get(bgModelConfig.getPath());
 		if ( bgModel == null ) {
 			bgModel = createBackgroundModel(bgModelConfig);
