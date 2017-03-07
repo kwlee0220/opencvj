@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import camus.service.DoubleRange;
 import camus.service.FloatRange;
 import camus.service.IntRange;
 import camus.service.SizeRange;
@@ -25,6 +26,7 @@ import org.opencv.core.Size;
 
 import com.google.common.collect.Range;
 
+import opencvj.camera.FlipCode;
 import opencvj.camera.OpenCvJCamera;
 import opencvj.misc.PerspectiveTransform;
 import utils.config.ConfigNode;
@@ -100,6 +102,25 @@ public final class OpenCvJUtils {
 		}
 	}
 	
+	public static DoubleRange asDoubleRange(ConfigNode config, DoubleRange defValue) {
+		if ( config.isMissing() ) {
+			return defValue;
+		}
+		else if ( config.isArray() && config.size() == 2 ) {
+			double low = config.get(0).asDouble();
+			double high = config.get(1).asDouble();
+			return new DoubleRange(low, high);
+		}
+		else if ( config.isMap() ) {
+			double low = config.get("low").asDouble();
+			double high = config.get("high").asDouble();
+			return new DoubleRange(low, high);
+		}
+		else {
+			throw new IllegalStateException("invalid DoubleRange Config: path=" + config.getPath());
+		}
+	}
+	
 	public static SizeRange asSizeRange(ConfigNode config, SizeRange defValue) {
 		if ( config.isMissing() ) {
 			return defValue;
@@ -116,6 +137,15 @@ public final class OpenCvJUtils {
 		}
 		else {
 			throw new IllegalStateException("invalid SizeRange Config: path=" + config.getPath());
+		}
+	}
+	
+	public static FlipCode asFlipCode(ConfigNode config, FlipCode defValue) {
+		if ( config.isMissing() ) {
+			return defValue;
+		}
+		else {
+			return FlipCode.from(config.asString());
 		}
 	}
 	

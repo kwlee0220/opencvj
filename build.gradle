@@ -17,7 +17,10 @@ repositories {
 }
 
 dependencies {
-	childProjects.values().each { compile it }
+	compile project(':utils')
+	compile project(":event")
+	compile project(':planet')
+	compile project(':camus.model')
 	
 	compile fileTree(dir: 'lib', include: "opencv-${opencv_version}.jar")
 	compile "com.google.inject:guice:4.1.0"
