@@ -29,7 +29,7 @@ public class HighGuiCamera implements OpenCvJCamera, Initializable {
     	
     	public Params(ConfigNode config) {
     		deviceIndex = config.get("device_index").asInt(DEF_DEVICE_INDEX);
-    		imageSize = OpenCvJUtils.asSize(config.get("image_size"), null);
+    		imageSize = OpenCvJUtils.asSize(config.get("image_size"));
     	}
     }
     

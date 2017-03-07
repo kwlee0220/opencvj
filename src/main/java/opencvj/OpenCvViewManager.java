@@ -16,7 +16,6 @@ import org.opencv.core.Size;
 
 import opencvj.blob.Blob;
 import opencvj.camera.DepthMatProxy;
-import utils.Initializable;
 
 
 /**
@@ -28,7 +27,7 @@ public final class OpenCvViewManager {
 													= new HashMap<String,OpenCvView>();
 	
 	public static void shutdown() {
-		s_windows.values().stream().forEach(Initializable::destroyQuietly);
+		s_windows.values().stream().forEach(comp -> comp.destroyQuietly());
 		s_windows.clear();
 	}
 	

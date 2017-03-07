@@ -19,8 +19,10 @@ repositories {
 dependencies {
 	compile project(':utils')
 	compile project(":event")
+	compile project(":async")
 	compile project(':planet')
 	compile project(':camus.model')
+	compile project(':etri.services')
 	
 	compile fileTree(dir: 'lib', include: "opencv-${opencv_version}.jar")
 	compile "com.google.inject:guice:4.1.0"

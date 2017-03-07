@@ -45,6 +45,24 @@ public final class OpenCvJUtils {
 		return !config.isMissing() ? new Scalar(config.getAsDoubleArray()) : defValue;
 	}
 	
+	public static Size asSize(ConfigNode config) {
+		assertNotMissingNode(config);
+		
+		if ( config.isArray() && config.size() == 2 ) {
+			double width = config.get(0).asDouble();
+			double height = config.get(1).asDouble();
+			return new Size(width, height);
+		}
+		else if ( config.isMap() ) {
+			double width = config.get("width").asDouble();
+			double height = config.get("height").asDouble();
+			return new Size(width, height);
+		}
+		else {
+			throw new IllegalStateException("invalid Size Config: path=" + config.getPath());
+		}
+	}
+	
 	public static Size asSize(ConfigNode config, Size defValue) {
 		if ( config.isMissing() ) {
 			return defValue;
@@ -146,6 +164,65 @@ public final class OpenCvJUtils {
 		}
 		else {
 			return FlipCode.from(config.asString());
+		}
+	}
+	
+	public static Point asPoint(ConfigNode config) {
+		assertNotMissingNode(config);
+		
+		if ( config.isArray() && config.size() == 2 ) {
+			Point pt = new Point();
+			pt.x = config.get(0).asDouble();
+			pt.y = config.get(1).asDouble();
+			return pt;
+		}
+		else {
+			throw new IllegalStateException("invalid Point Config: path=" + config.getPath());
+		}
+	}
+	
+	public static Point[] asPoints(ConfigNode config) {
+		assertNotMissingNode(config);
+		if ( config.isArray() && config.size()%2 == 0 ) {
+			Point[] pts = new Point[config.size() / 2];
+			for ( int i =0; i < pts.length; ++i ) {
+				pts[i] = new Point();
+				pts[i].x = config.get(i*2).asDouble();
+				pts[i].y = config.get(i*2+1).asDouble();
+			}
+			
+			return pts;
+		}
+		else {
+			throw new IllegalArgumentException("invalid Point Array value");
+		}
+	}
+	
+	public static Mat asMat(ConfigNode config) {
+		assertNotMissingNode(config);
+		
+		if ( config.isMap() ) {
+			int rows = config.get("rows").asInt();
+			int cols = config.get("cols").asInt();
+			int type = config.get("type").asInt();
+
+			Mat mat = new Mat(rows, cols, type);
+			ConfigNode data = config.get("data");
+			
+			switch ( type ) {
+				case CvType.CV_64F:
+					double[] doubleData = new double[rows * cols];
+					for ( int i =0; i < data.size(); ++i ) {
+						doubleData[i] = data.get(i).asDouble();
+					}
+					mat.put(0, 0, doubleData);
+					break;
+			}
+			
+			return mat;
+		}
+		else {
+			throw new IllegalStateException("invalid Point Config: path=" + config.getPath());
 		}
 	}
 	
@@ -520,5 +597,11 @@ public final class OpenCvJUtils {
 	
 	public static double calcDegreeBtwLines(Point ptJoint, Point pt1, Point pt2) {
 		return Math.toDegrees(calcRadianBtwLines(ptJoint, pt1, pt2));
+	}
+	
+	private static void assertNotMissingNode(ConfigNode config) {
+		if ( config.isMissing() ) {
+			throw new OpenCvJException(String.format("invalid path: path=%s", config.getPath()));
+		}
 	}
 }
