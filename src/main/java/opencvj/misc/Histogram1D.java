@@ -15,11 +15,12 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import config.Config;
 import opencvj.MatConvas;
 import opencvj.Mats;
 import opencvj.OpenCvJ;
 import opencvj.OpenCvJException;
+import opencvj.OpenCvJUtils;
+import utils.config.ConfigNode;
 
 
 /**
@@ -36,10 +37,10 @@ public class Histogram1D implements AutoCloseable {
 	private final MatOfFloat m_ranges;
 	private float[] m_binValues;
 	
-	public static Histogram1D create(Config config) {
-		int nbins = config.getAsInt("nbins", -1);
-		int channel = config.getAsInt("channel", DEF_CHANNEL);
-		FloatRange range = config.get("range").asFloatRange();
+	public static Histogram1D create(ConfigNode config) {
+		int nbins = config.get("nbins").asInt(-1);
+		int channel = config.get("channel").asInt(DEF_CHANNEL);
+		FloatRange range = OpenCvJUtils.asFloatRange(config.get("range"), null);
 		
 		return new Histogram1D(nbins, channel, range);
 	}

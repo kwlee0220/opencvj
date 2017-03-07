@@ -14,9 +14,9 @@ import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import config.Config;
 import opencvj.Mats;
 import opencvj.OpenCvJException;
+import utils.config.ConfigNode;
 
 
 
@@ -36,16 +36,16 @@ public class BlobExtractor {
 	private ContourMode m_contour_mode = ContourMode.CV_RETR_LIST;
 	private BlobFilter m_filter = null;
 	
-	public static BlobExtractor create(Config config) {
+	public static BlobExtractor create(ConfigNode config) {
 		BlobExtractor ext = new BlobExtractor();
 
-		ext.m_approx_poly_epsilon = config.getMember("approx_poly_epsilon").asFloat(0);
-		ext.m_morph_action = MorphAction.from(config.getMember("morph_action"),
+		ext.m_approx_poly_epsilon = config.get("approx_poly_epsilon").asFloat(0);
+		ext.m_morph_action = MorphAction.from(config.get("morph_action"),
 												MorphAction.MORPH_ACT_NONE);
-		ext.m_contour_mode = parseContourMode(config.getMember("contour_mode").asString("list"));
+		ext.m_contour_mode = parseContourMode(config.get("contour_mode").asString("list"));
 		
-		boolean ignoreHoles = config.getMember("ignore_hole").asBoolean(true);
-		Config sizeConfig = config.getMember("size");
+		boolean ignoreHoles = config.get("ignore_hole").asBoolean(true);
+		ConfigNode sizeConfig = config.get("size");
 		if ( sizeConfig.isMap() ) {
 			ext.setFilter(Blobs.newSizeRangeBlobFilter(sizeConfig, ignoreHoles));
 		}

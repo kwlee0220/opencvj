@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import config.Config;
-import config.json.JsonConfig;
 import opencvj.blob.AdaptiveImageThreshold;
 import opencvj.blob.BackgroundModel;
 import opencvj.blob.DeltaAwareForegroundDetector;
@@ -33,6 +31,8 @@ import opencvj.features2d.ObjectTemplateStore;
 import opencvj.track.Backprojector;
 import opencvj.track.DeltaDepthBackprojector;
 import opencvj.track.HueBackprojector;
+import utils.config.ConfigNode;
+import utils.config.json.JsonConfiguration;
 
 
 
@@ -47,7 +47,7 @@ public final class OpenCvJSystem {
 	private static File DATA_DIR =null;
 	
 	private static File CONFIG_DIR =null;
-	private static Config ROOT_CONFIG =null;
+	private static JsonConfiguration ROOT_CONFIG =null;
 	
 	private static OpenCvJLoader LOADER;
 	private static final Map<String,OpenCvJCameraLoader> CAMERA_LOADERS
@@ -84,7 +84,7 @@ public final class OpenCvJSystem {
 		
 		CONFIG_DIR = new File(getHomeDir(), "configs");
 		String fname = configFileName != null ? configFileName : "opencvj.conf";
-		ROOT_CONFIG = JsonConfig.loadConfigFile(new File(getConfigDir(), fname));
+		ROOT_CONFIG = JsonConfiguration.load(new File(getConfigDir(), fname));
 		ROOT_CONFIG.addVariable("home.dir", HOME_DIR.getAbsolutePath());
 		
 		try {
@@ -124,12 +124,12 @@ public final class OpenCvJSystem {
 		return CONFIG_DIR;
 	}
 	
-	public static Config getRootConfig() {
+	public static JsonConfiguration getConfiguration() {
 		return ROOT_CONFIG;
 	}
 	
-	public static Config getConfigNode(String path) {
-		return getRootConfig().traverse(path);
+	public static ConfigNode getConfigNode(String path) {
+		return getConfiguration().traverse(path);
 	}
 	
 	public static OpenCvJLoader getOpenCvJLoader() {
@@ -154,12 +154,12 @@ public final class OpenCvJSystem {
 	
 	private static final OpenCvJCameraLoader HIGHGUI_LOADER = new OpenCvJCameraLoader() {
 		@Override
-		public OpenCvJCamera load(Config config) throws Exception {
+		public OpenCvJCamera load(ConfigNode config) throws Exception {
 			return HighGuiCamera.create(getOpenCvJLoader(), config);
 		}
 	};
 	
-	public static final OpenCvJCameraFactoryImpl createOpenCvJCameraFactory(Config config)
+	public static final OpenCvJCameraFactoryImpl createOpenCvJCameraFactory(ConfigNode config)
 		throws Exception {
 		String type = config.get("type").asString(null);
 		OpenCvJCameraLoader loader = CAMERA_LOADERS.get(type);
@@ -176,7 +176,7 @@ public final class OpenCvJSystem {
 		}
 	}
 	
-	public static final OpenCvJCamera createOpenCvJCamera(Config config) throws Exception {
+	public static final OpenCvJCamera createOpenCvJCamera(ConfigNode config) throws Exception {
 		String type = config.get("type").asString(null);
 		OpenCvJCameraLoader loader = CAMERA_LOADERS.get(type);
 		if ( loader != null ) {
@@ -187,7 +187,7 @@ public final class OpenCvJSystem {
 		}
 	}
 	
-	public static final OpenCvJDepthCamera createDepthCamera(Config config) throws Exception {
+	public static final OpenCvJDepthCamera createDepthCamera(ConfigNode config) throws Exception {
 		String type = config.get("type").asString(null);
 		OpenCvJCameraLoader loader = CAMERA_LOADERS.get(type);
 		if ( loader != null ) {
@@ -198,13 +198,13 @@ public final class OpenCvJSystem {
 		}
 	}
 	
-	public static final ColorDepthCompositeFactory createCDCFactory(Config config)
+	public static final ColorDepthCompositeFactory createCDCFactory(ConfigNode config)
 		throws Exception {
 		ColorDepthComposite cdc = createCDC(config);
 		return CDCFactory.create(cdc, config);
 	}
 	
-	private static final ColorDepthComposite createCDC(Config config) throws Exception {
+	private static final ColorDepthComposite createCDC(ConfigNode config) throws Exception {
 		String type = config.get("type").asString(null);
 		ColorDepthCompositeLoader loader = CDC_LOADERS.get(type);
 		if ( loader != null ) {
@@ -236,7 +236,7 @@ public final class OpenCvJSystem {
 //		}
 //	}
 
-	public static BackgroundModel createBackgroundModel(Config config) {
+	public static BackgroundModel createBackgroundModel(ConfigNode config) {
 		BackgroundModel bgModel;
 		
 		String type = config.get("type").asString(null);
@@ -254,8 +254,8 @@ public final class OpenCvJSystem {
 		return bgModel;
 	}
 	
-	public static BackgroundModel getBackgroundModel(Config config) {
-		Config bgModelConfig = config.get("bgmodel");
+	public static BackgroundModel getBackgroundModel(ConfigNode config) {
+		ConfigNode bgModelConfig = config.get("bgmodel");
 		bgModelConfig = (bgModelConfig == null) ? config : bgModelConfig.asReference();
 		BackgroundModel bgModel = BG_MODELS.get(bgModelConfig.getPath());
 		if ( bgModel == null ) {
@@ -265,7 +265,7 @@ public final class OpenCvJSystem {
 		return bgModel;
 	}
 
-	public static ForegroundDetector createForegroundDetector(Config config) {
+	public static ForegroundDetector createForegroundDetector(ConfigNode config) {
 		BackgroundModel bgModel = getBackgroundModel(config);
 		if ( bgModel instanceof MADepthBackgroundModel ) {
 			return MADepthForegroundDetector.create(config);
@@ -278,7 +278,7 @@ public final class OpenCvJSystem {
 		}
 	}
 	
-	public static Backprojector createBackprojector(Config config) {
+	public static Backprojector createBackprojector(ConfigNode config) {
 		String type = config.get("type").asString();
 		if ( "depth_delta".equals(type) ) {
 			DeltaAwareForegroundDetector fgDetector = (DeltaAwareForegroundDetector)createForegroundDetector(config);
@@ -292,7 +292,7 @@ public final class OpenCvJSystem {
 		}
 	}
 
-	public static ImageThreshold createImageThreshold(Config config) {
+	public static ImageThreshold createImageThreshold(ConfigNode config) {
 		String type = config.get("type").asString(null);
 		if ( type == null || type.equals("simple") ) {
 			return SimpleImageThreshold.create(config);

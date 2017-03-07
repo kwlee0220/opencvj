@@ -7,12 +7,12 @@ import org.opencv.highgui.VideoCapture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import config.Config;
 import opencvj.OpenCvJException;
 import opencvj.OpenCvJLoader;
 import opencvj.OpenCvJUtils;
 import utils.Initializable;
 import utils.UninitializedException;
+import utils.config.ConfigNode;
 
 
 /**
@@ -27,7 +27,7 @@ public class HighGuiCamera implements OpenCvJCamera, Initializable {
     	public int deviceIndex =DEF_DEVICE_INDEX;
     	public Size imageSize;
     	
-    	public Params(Config config) {
+    	public Params(ConfigNode config) {
     		deviceIndex = config.get("device_index").asInt(DEF_DEVICE_INDEX);
     		imageSize = OpenCvJUtils.asSize(config.get("image_size"), null);
     	}
@@ -35,13 +35,13 @@ public class HighGuiCamera implements OpenCvJCamera, Initializable {
     
 	// properties (BEGIN)
 	private volatile OpenCvJLoader m_loader;
-	private volatile Config m_config;
+	private volatile ConfigNode m_config;
 	// properties (END)
 	
 	private Params m_params;
 	private VideoCapture m_capture;
 	
-	public static HighGuiCamera create(OpenCvJLoader loader, Config config) throws Exception {
+	public static HighGuiCamera create(OpenCvJLoader loader, ConfigNode config) throws Exception {
 		HighGuiCamera camera = new HighGuiCamera();
 		camera.setOpenCvJLoader(loader);
 		camera.setConfig(config);
@@ -56,7 +56,7 @@ public class HighGuiCamera implements OpenCvJCamera, Initializable {
 		m_loader = loader;
 	}
 
-	public final void setConfig(Config config) {
+	public final void setConfig(ConfigNode config) {
 		m_config = config;
 	}
 	

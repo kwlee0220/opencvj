@@ -8,7 +8,6 @@ import org.apache.commons.cli.Option;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
-import opencvj.OpenCvJConfig;
 import opencvj.OpenCvJSystem;
 import opencvj.OpenCvView;
 import opencvj.OpenCvViewManager;
@@ -18,6 +17,7 @@ import utils.CommandLineParser;
 import utils.FramePerSecondMeasure;
 import utils.Initializable;
 import utils.Log4jConfigurator;
+import utils.config.ConfigNode;
 
 
 /**
@@ -47,7 +47,7 @@ public class TestBasicOpenCvJCamera {
 
 		OpenCvJSystem.initialize(homeDir, null);
         
-        OpenCvJConfig config = OpenCvJSystem.getConfigNode(cl.getOptionValue("camera", "highgui")); 
+        ConfigNode config = OpenCvJSystem.getConfigNode(cl.getOptionValue("camera", "highgui")); 
         
         // creates target test object and dependent ones
         //

@@ -1,6 +1,6 @@
 package opencvj.blob;
 
-import config.Config;
+import utils.config.ConfigNode;
 
 
 /**
@@ -12,7 +12,7 @@ public enum MorphAction {
 	MORPH_ACT_OPEN,
 	MORPH_ACT_NONE;
 	
-	public static MorphAction from(Config config, MorphAction defValue) {
+	public static MorphAction from(ConfigNode config, MorphAction defValue) {
 		if ( config.isMissing() ) {
 			return defValue;
 		}

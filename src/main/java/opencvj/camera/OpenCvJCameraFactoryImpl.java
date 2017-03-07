@@ -11,12 +11,12 @@ import org.apache.log4j.Logger;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
-import config.Config;
 import net.jcip.annotations.GuardedBy;
 import utils.Duration;
 import utils.Initializable;
 import utils.UninitializedException;
 import utils.Utilities;
+import utils.config.ConfigNode;
 import utils.io.IOUtils;
 import utils.thread.ExecutorAware;
 
@@ -34,7 +34,7 @@ public class OpenCvJCameraFactoryImpl implements OpenCvJCameraFactory, Initializ
 	private volatile long m_maxWaitMillis = -1;		// default: infinite wait
 	@GuardedBy("m_mutex") private long m_interval = -1;
 	private volatile boolean m_isOwner = true;
-	private volatile Config m_config;
+	private volatile ConfigNode m_config;
 	private volatile Executor m_executor;			// optional
 	// properties (END)
 	
@@ -48,7 +48,7 @@ public class OpenCvJCameraFactoryImpl implements OpenCvJCameraFactory, Initializ
 	@GuardedBy("m_factLock") private final List<SharedOpenCvJCamera> m_shareds
 														= new ArrayList<SharedOpenCvJCamera>();
 	
-	public static final OpenCvJCameraFactoryImpl create(OpenCvJCamera source, Config config) throws Exception {
+	public static final OpenCvJCameraFactoryImpl create(OpenCvJCamera source, ConfigNode config) throws Exception {
 		OpenCvJCameraFactoryImpl fact = new OpenCvJCameraFactoryImpl();
 		fact.setSourceCamera(source);
 		fact.setConfig(config);
@@ -68,7 +68,7 @@ public class OpenCvJCameraFactoryImpl implements OpenCvJCameraFactory, Initializ
 		m_isOwner = flag;
 	}
 	
-	public final void setConfig(Config config) {
+	public final void setConfig(ConfigNode config) {
 		m_config = config;
 	}
 	

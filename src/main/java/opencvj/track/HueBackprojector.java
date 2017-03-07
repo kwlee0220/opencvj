@@ -13,11 +13,11 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import config.Config;
 import opencvj.Mats;
 import opencvj.OpenCvJ;
 import opencvj.OpenCvJUtils;
 import opencvj.misc.Histogram1D;
+import utils.config.ConfigNode;
 
 
 /**
@@ -34,8 +34,8 @@ public class HueBackprojector implements Backprojector {
 	private Scalar m_lowerHSV = DEF_VALID_LOWER_HSV;
 	private Scalar m_upperHSV = DEF_VALID_UPPER_HSV;
 	
-	public static HueBackprojector create(Config config) {
-		int nbins = config.get("nbins").asInt();
+	public static HueBackprojector create(ConfigNode config) {
+		int nbins = config.get("nbins").asInt(-1);
 		Histogram1D hist = new Histogram1D(nbins, RANGE);
 		
 		Scalar lowerb = OpenCvJUtils.asScalar(config.get("lower_hsv"), DEF_VALID_LOWER_HSV);

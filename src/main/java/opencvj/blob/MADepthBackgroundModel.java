@@ -8,9 +8,9 @@ import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-import config.Config;
 import opencvj.Mats;
 import opencvj.OpenCvJUtils;
+import utils.config.ConfigNode;
 
 
 /**
@@ -24,7 +24,7 @@ public class MADepthBackgroundModel implements BackgroundModel {
 	private Mat m_blindBgMask =null;
 	private final float m_updateRate;
 	
-	public static MADepthBackgroundModel create(Config config) {
+	public static MADepthBackgroundModel create(ConfigNode config) {
 		return new MADepthBackgroundModel(config.get("update_rate").asFloat());
 	}
 	

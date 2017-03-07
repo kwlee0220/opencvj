@@ -11,12 +11,12 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
-import config.Config;
 import net.jcip.annotations.GuardedBy;
 import utils.CheckedSupplier;
 import utils.Initializable;
 import utils.UninitializedException;
 import utils.Utilities;
+import utils.config.ConfigNode;
 import utils.io.IOUtils;
 import utils.thread.ExecutorAware;
 import utils.thread.InterThreadShareSupplier;
@@ -34,7 +34,7 @@ public class CDCFactory implements ColorDepthCompositeFactory, ExecutorAware, In
 	// properties (BEGIN)
 	private volatile ColorDepthComposite m_source;
 	private volatile boolean m_owner = true;
-	private volatile Config m_config;
+	private volatile ConfigNode m_config;
 	private volatile Executor m_executor;			// optional
 	// properties (END)
 	
@@ -63,7 +63,7 @@ public class CDCFactory implements ColorDepthCompositeFactory, ExecutorAware, In
 		}
 	}
 	
-	public static final CDCFactory create(ColorDepthComposite source, Config config) throws Exception {
+	public static final CDCFactory create(ColorDepthComposite source, ConfigNode config) throws Exception {
 		CDCFactory fact = new CDCFactory();
 		fact.setSourceCdc(source);
 		fact.setConfig(config);
@@ -84,7 +84,7 @@ public class CDCFactory implements ColorDepthCompositeFactory, ExecutorAware, In
 		m_owner = flag;
 	}
 	
-	public final void setConfig(Config config) {
+	public final void setConfig(ConfigNode config) {
 		m_config = config;
 	}
 	
@@ -108,7 +108,7 @@ public class CDCFactory implements ColorDepthCompositeFactory, ExecutorAware, In
 					+ getClass().getName());
 		}
 		
-		Config maxWaitConfig = m_config.get("max_capture_wait");
+		ConfigNode maxWaitConfig = m_config.get("max_capture_wait");
 		if ( !maxWaitConfig.isMissing() ) {
 			m_sharedImageSupplier.setMaxWaitMillis(maxWaitConfig.asDuration().asMillis());
 		}

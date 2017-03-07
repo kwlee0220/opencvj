@@ -6,7 +6,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
 
-import config.Config;
 import opencvj.Mats;
 import opencvj.OpenCvJ;
 import opencvj.OpenCvJUtils;
@@ -14,6 +13,7 @@ import opencvj.blob.BackgroundModel;
 import opencvj.blob.BackgroundModelAware;
 import opencvj.blob.DeltaAwareForegroundDetector;
 import opencvj.misc.Histogram1D;
+import utils.config.ConfigNode;
 
 
 /**
@@ -24,7 +24,7 @@ public class DeltaDepthBackprojector implements Backprojector, BackgroundModelAw
 	private DeltaAwareForegroundDetector m_fgDetector;
 	private final Histogram1D m_hist;
 	
-	public static DeltaDepthBackprojector create(DeltaAwareForegroundDetector fgDetector, Config config) {
+	public static DeltaDepthBackprojector create(DeltaAwareForegroundDetector fgDetector, ConfigNode config) {
 		Histogram1D hist = Histogram1D.create(config);
 		return new DeltaDepthBackprojector(fgDetector, hist);
 	}

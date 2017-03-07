@@ -14,12 +14,12 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 
-import config.Config;
 import opencvj.Mats;
 import opencvj.OpenCvJ;
 import opencvj.OpenCvJUtils;
 import opencvj.OpenCvViewManager;
 import opencvj.camera.OpenCvJCamera;
+import utils.config.ConfigNode;
 import utils.io.IOUtils;
 
 
@@ -77,7 +77,7 @@ public final class Blobs {
 	}
 	
 	public static final int learnBackground(OpenCvJCamera camera, BackgroundLearnable bgModel,
-											Config config, Logger logger) {
+											ConfigNode config, Logger logger) {
 		int nframes = 0;
 		
 		long learningMillis = config.traverse("period").asDuration(0).asMillis();
@@ -132,7 +132,7 @@ public final class Blobs {
 		return new SizeRangeFilter(range);
 	}
 	
-	public static BlobFilter newSizeRangeBlobFilter(Config config, boolean ignoreHoles) {
+	public static BlobFilter newSizeRangeBlobFilter(ConfigNode config, boolean ignoreHoles) {
 		return new SizeRangeFilter(OpenCvJUtils.asSizeRange(config, null), ignoreHoles);
 	}
 	

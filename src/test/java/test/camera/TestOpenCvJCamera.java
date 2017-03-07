@@ -1,6 +1,5 @@
 package test.camera;
 
-import java.awt.MouseInfo;
 import java.io.File;
 
 import camus.service.geo.Point;
@@ -9,7 +8,6 @@ import camus.service.image.Color;
 import org.apache.commons.cli.Option;
 import org.opencv.core.Mat;
 
-import opencvj.OpenCvJConfig;
 import opencvj.Mats;
 import opencvj.OpenCvJSystem;
 import opencvj.OpenCvView;
@@ -21,6 +19,7 @@ import utils.CommandLineParser;
 import utils.FramePerSecondMeasure;
 import utils.Initializable;
 import utils.Log4jConfigurator;
+import utils.config.ConfigNode;
 
 
 /**
@@ -50,7 +49,7 @@ public class TestOpenCvJCamera {
 	    
         TestOpenCvJ.initialize(homeDir);
         
-        OpenCvJConfig config = OpenCvJSystem.getConfigNode(cl.getOptionValue("camera", "highgui"));
+        ConfigNode config = OpenCvJSystem.getConfigNode(cl.getOptionValue("camera", "highgui"));
 //        Config config = OpenCvJSystem.getConfig(cl.getOptionValue("camera", "xtion.depth")); 
 //      Config config = OpenCvJSystem.getConfig(cl.getOptionValue("camera", "xtion.color"));
         

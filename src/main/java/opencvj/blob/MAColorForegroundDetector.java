@@ -4,8 +4,8 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 
-import config.Config;
 import opencvj.OpenCvJSystem;
+import utils.config.ConfigNode;
 
 
 /**
@@ -19,9 +19,9 @@ public class MAColorForegroundDetector extends AbstractForegroundDetector
 	public static class Params {
 		public int intensityThreshold =DEFAULT_INTENSITY_THRESHOLD;
 		
-		public static Params create(Config config) {
+		public static Params create(ConfigNode config) {
 			Params params = new Params();
-			params.intensityThreshold = config.getMember("intensity_threshold")
+			params.intensityThreshold = config.get("intensity_threshold")
 												.asInt(DEFAULT_INTENSITY_THRESHOLD);
 			
 			return params;
@@ -31,8 +31,8 @@ public class MAColorForegroundDetector extends AbstractForegroundDetector
 	private final Params m_params;
 	private MAColorBackgroundModel m_bgModel;
 	
-	public static MAColorForegroundDetector create(Config config) {
-		Config bgModelConfig = config.getMember("bgmodel");
+	public static MAColorForegroundDetector create(ConfigNode config) {
+		ConfigNode bgModelConfig = config.get("bgmodel");
 		bgModelConfig = (bgModelConfig.isMissing()) ? config : bgModelConfig.asReference();
 		MAColorBackgroundModel bgModel = (MAColorBackgroundModel)OpenCvJSystem
 																.getBackgroundModel(bgModelConfig);

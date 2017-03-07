@@ -1,6 +1,6 @@
 package opencvj.camera;
 
-import config.Config;
+import utils.config.ConfigNode;
 
 
 /**
@@ -8,5 +8,5 @@ import config.Config;
  * @author Kang-Woo Lee (ETRI)
  */
 public interface ColorDepthCompositeLoader {
-	public ColorDepthComposite load(Config config) throws Exception;
+	public ColorDepthComposite load(ConfigNode config) throws Exception;
 }

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import camus.service.FloatRange;
 import camus.service.IntRange;
 import camus.service.SizeRange;
 import camus.service.geo.Polygon;
@@ -24,10 +25,9 @@ import org.opencv.core.Size;
 
 import com.google.common.collect.Range;
 
-import config.Config;
-import config.InvalidConfigException;
 import opencvj.camera.OpenCvJCamera;
 import opencvj.misc.PerspectiveTransform;
+import utils.config.ConfigNode;
 
 
 /**
@@ -39,11 +39,11 @@ public final class OpenCvJUtils {
 		throw new AssertionError("Should not be called this one: " + OpenCvJUtils.class);
 	}
 	
-	public static Scalar asScalar(Config config, Scalar defValue) {
+	public static Scalar asScalar(ConfigNode config, Scalar defValue) {
 		return !config.isMissing() ? new Scalar(config.getAsDoubleArray()) : defValue;
 	}
 	
-	public static Size asSize(Config config, Size defValue) {
+	public static Size asSize(ConfigNode config, Size defValue) {
 		if ( config.isMissing() ) {
 			return defValue;
 		}
@@ -53,16 +53,16 @@ public final class OpenCvJUtils {
 			return new Size(width, height);
 		}
 		else if ( config.isMap() ) {
-			double width = config.getMember("width").asDouble();
-			double height = config.getMember("height").asDouble();
+			double width = config.get("width").asDouble();
+			double height = config.get("height").asDouble();
 			return new Size(width, height);
 		}
 		else {
-			throw new InvalidConfigException("invalid Size Config: path=" + config.getPath());
+			throw new IllegalStateException("invalid Size Config: path=" + config.getPath());
 		}
 	}
 	
-	public static IntRange asIntRange(Config config, IntRange defValue) {
+	public static IntRange asIntRange(ConfigNode config, IntRange defValue) {
 		if ( config.isMissing() ) {
 			return defValue;
 		}
@@ -72,16 +72,35 @@ public final class OpenCvJUtils {
 			return new IntRange(low, high);
 		}
 		else if ( config.isMap() ) {
-			int low = config.getMember("low").asInt();
-			int high = config.getMember("high").asInt();
+			int low = config.get("low").asInt();
+			int high = config.get("high").asInt();
 			return new IntRange(low, high);
 		}
 		else {
-			throw new InvalidConfigException("invalid IntRange Config: path=" + config.getPath());
+			throw new IllegalStateException("invalid IntRange Config: path=" + config.getPath());
 		}
 	}
 	
-	public static SizeRange asSizeRange(Config config, SizeRange defValue) {
+	public static FloatRange asFloatRange(ConfigNode config, FloatRange defValue) {
+		if ( config.isMissing() ) {
+			return defValue;
+		}
+		else if ( config.isArray() && config.size() == 2 ) {
+			float low = config.get(0).asFloat();
+			float high = config.get(1).asFloat();
+			return new FloatRange(low, high);
+		}
+		else if ( config.isMap() ) {
+			float low = config.get("low").asFloat();
+			float high = config.get("high").asFloat();
+			return new FloatRange(low, high);
+		}
+		else {
+			throw new IllegalStateException("invalid FloatRange Config: path=" + config.getPath());
+		}
+	}
+	
+	public static SizeRange asSizeRange(ConfigNode config, SizeRange defValue) {
 		if ( config.isMissing() ) {
 			return defValue;
 		}
@@ -91,12 +110,12 @@ public final class OpenCvJUtils {
 			return new SizeRange(low, high);
 		}
 		else if ( config.isMap() ) {
-			int low = config.getMember("low").asInt(Integer.MIN_VALUE);
-			int high = config.getMember("high").asInt(Integer.MAX_VALUE);
+			int low = config.get("low").asInt(Integer.MIN_VALUE);
+			int high = config.get("high").asInt(Integer.MAX_VALUE);
 			return new SizeRange(low, high);
 		}
 		else {
-			throw new InvalidConfigException("invalid SizeRange Config: path=" + config.getPath());
+			throw new IllegalStateException("invalid SizeRange Config: path=" + config.getPath());
 		}
 	}
 	

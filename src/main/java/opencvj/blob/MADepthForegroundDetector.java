@@ -10,12 +10,12 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
-import config.Config;
 import opencvj.Mats;
 import opencvj.OpenCvJ;
 import opencvj.OpenCvJSystem;
 import opencvj.OpenCvJUtils;
 import utils.UninitializedException;
+import utils.config.ConfigNode;
 
 
 /**
@@ -34,14 +34,14 @@ public class MADepthForegroundDetector extends AbstractDeltaAwareForegroundDetec
 		IntRange backgroundDepthDelta;
 		int fgModelFlags = BG_MODEL_VALID_VALID + BG_MODEL_INVALID_VALID;
 		
-		public static Params create(Config config) {
+		public static Params create(ConfigNode config) {
 			Params params = new Params();
 
-			params.validDepthRange = OpenCvJUtils.asIntRange(config.getMember("valid_depth"),
+			params.validDepthRange = OpenCvJUtils.asIntRange(config.get("valid_depth"),
 															DEFAULT_VALID_DEPTH);
 			params.backgroundDepthDelta = OpenCvJUtils.asIntRange(
-														config.getMember("bg_depth_delta"), null);
-			params.fgModelFlags = config.getMember("fg_model_flags")
+														config.get("bg_depth_delta"), null);
+			params.fgModelFlags = config.get("fg_model_flags")
 										.asInt(BG_MODEL_VALID_VALID + BG_MODEL_INVALID_VALID);
 			
 			return params;
@@ -52,7 +52,7 @@ public class MADepthForegroundDetector extends AbstractDeltaAwareForegroundDetec
 	private MADepthBackgroundModel m_bgModel;
 	private final Mat m_tmpDelta32f = new Mat();
 	
-	public static MADepthForegroundDetector create(Config config) {
+	public static MADepthForegroundDetector create(ConfigNode config) {
 		MADepthBackgroundModel bgModel = (MADepthBackgroundModel)OpenCvJSystem
 																	.getBackgroundModel(config);
 		BlobExtractor ext = BlobExtractor.create(config);
