@@ -80,7 +80,7 @@ public final class Blobs {
 											ConfigNode config, Logger logger) {
 		int nframes = 0;
 		
-		long learningMillis = config.traverse("period").asDuration(0).asMillis();
+		long learningMillis = config.traverse("period").asDuration(0);
 		if ( learningMillis > 0 ) {
 			if ( logger != null && logger.isInfoEnabled() ) {
 				logger.info("learning depth background: period=" + config.traverse("period").asString());

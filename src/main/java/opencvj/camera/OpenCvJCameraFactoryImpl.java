@@ -12,9 +12,9 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
 import net.jcip.annotations.GuardedBy;
-import utils.Duration;
 import utils.Initializable;
 import utils.UninitializedException;
+import utils.UnitUtils;
 import utils.Utilities;
 import utils.config.ConfigNode;
 import utils.io.IOUtils;
@@ -27,7 +27,7 @@ import utils.thread.ExecutorAware;
  */
 public class OpenCvJCameraFactoryImpl implements OpenCvJCameraFactory, Initializable, ExecutorAware {
 	private static final Logger s_logger = Logger.getLogger("RESULT_SHARING");
-	private static final Duration MAX_CAPTURE_WAIT = Duration.parseDuration("3s");
+	private static final long MAX_CAPTURE_WAIT = UnitUtils.parseDuration("3s");
 
 	// properties (BEGIN)
 	private volatile OpenCvJCamera m_source;
@@ -92,8 +92,8 @@ public class OpenCvJCameraFactoryImpl implements OpenCvJCameraFactory, Initializ
 					+ getClass().getName());
 		}
 		
-		m_maxWaitMillis = m_config.get("max_capture_wait").asDuration(MAX_CAPTURE_WAIT).asMillis();
-		m_interval = m_config.get("capture_interval").asDuration().asMillis();
+		m_maxWaitMillis = m_config.get("max_capture_wait").asDuration(MAX_CAPTURE_WAIT);
+		m_interval = m_config.get("capture_interval").asDuration();
 	}
 	
 	public void destroy() {

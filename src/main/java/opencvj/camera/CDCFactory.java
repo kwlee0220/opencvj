@@ -110,7 +110,7 @@ public class CDCFactory implements ColorDepthCompositeFactory, ExecutorAware, In
 		
 		ConfigNode maxWaitConfig = m_config.get("max_capture_wait");
 		if ( !maxWaitConfig.isMissing() ) {
-			m_sharedImageSupplier.setMaxWaitMillis(maxWaitConfig.asDuration().asMillis());
+			m_sharedImageSupplier.setMaxWaitMillis(maxWaitConfig.asDuration());
 		}
 		
 		m_colorFact = OpenCvJCameraFactoryImpl.create(m_source.getColorCamera(),
