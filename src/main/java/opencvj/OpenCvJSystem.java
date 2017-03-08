@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import com.google.common.base.Preconditions;
 
 import opencvj.blob.AdaptiveImageThreshold;
 import opencvj.blob.BackgroundModel;
@@ -23,9 +26,7 @@ import opencvj.camera.ColorDepthCompositeFactory;
 import opencvj.camera.ColorDepthCompositeLoader;
 import opencvj.camera.HighGuiCamera;
 import opencvj.camera.OpenCvJCamera;
-import opencvj.camera.OpenCvJCameraFactoryImpl;
 import opencvj.camera.OpenCvJCameraLoader;
-import opencvj.camera.OpenCvJDepthCamera;
 import opencvj.features2d.ImageStore;
 import opencvj.features2d.ObjectTemplateStore;
 import opencvj.track.Backprojector;
@@ -144,6 +145,13 @@ public final class OpenCvJSystem {
 		CAMERA_LOADERS.remove(type);
 	}
 	
+	public static final Optional<OpenCvJCameraLoader> getOpenCvJCameraLoader(String type) {
+		Preconditions.checkNotNull(type, "OpenCvJCameraLoader type is null");
+		
+		OpenCvJCameraLoader loader = CAMERA_LOADERS.get(type);
+		return (loader != null) ? Optional.of(loader) : Optional.empty();
+	}
+	
 	public static final void registerCDCLoader(String type, ColorDepthCompositeLoader fact) {
 		CDC_LOADERS.put(type, fact);
 	}
@@ -158,45 +166,6 @@ public final class OpenCvJSystem {
 			return HighGuiCamera.create(getOpenCvJLoader(), config);
 		}
 	};
-	
-	public static final OpenCvJCameraFactoryImpl createOpenCvJCameraFactory(ConfigNode config)
-		throws Exception {
-		String type = config.get("type").asString(null);
-		OpenCvJCameraLoader loader = CAMERA_LOADERS.get(type);
-		if ( loader != null ) {
-			OpenCvJCameraFactoryImpl cameraFact = new OpenCvJCameraFactoryImpl();
-			cameraFact.setSourceCamera(loader.load(config));
-			cameraFact.setConfig(config);
-			cameraFact.initialize();
-			
-			return cameraFact;
-		}
-		else {
-			throw new OpenCvJException("unknown camera type=" + type);
-		}
-	}
-	
-	public static final OpenCvJCamera createOpenCvJCamera(ConfigNode config) throws Exception {
-		String type = config.get("type").asString(null);
-		OpenCvJCameraLoader loader = CAMERA_LOADERS.get(type);
-		if ( loader != null ) {
-			return loader.load(config);
-		}
-		else {
-			throw new OpenCvJException("unknown camera type=" + type);
-		}
-	}
-	
-	public static final OpenCvJDepthCamera createDepthCamera(ConfigNode config) throws Exception {
-		String type = config.get("type").asString(null);
-		OpenCvJCameraLoader loader = CAMERA_LOADERS.get(type);
-		if ( loader != null ) {
-			return (OpenCvJDepthCamera)loader.load(config);
-		}
-		else {
-			throw new OpenCvJException("unknown camera type=" + type);
-		}
-	}
 	
 	public static final ColorDepthCompositeFactory createCDCFactory(ConfigNode config)
 		throws Exception {
@@ -215,54 +184,34 @@ public final class OpenCvJSystem {
 		}
 	}
 	
-//	public static final OpenCvJDepthCamera createDepthCamera(Config config) throws Exception {
-//		String type = config.get("type").asString(null);
-//		if ( "openni2_depth".equals(type) ) {
-//			return OpenNI2DepthCamera.create(getOpenNI2Loader(), config);
-//		}
-//		else {
-//			throw new OpenCvJException("unknown depth camera type=" + type);
-//		}
-//	}
-//
-//	public static final OpenNI2ColorDepthComposite createColorDepthComposite(Config config)
-//		throws Exception {
-//		String type = config.get("type").asString(null);
-//		if ( "openni2".equals(type) ) {
-//			return OpenNI2ColorDepthComposite.create(getOpenNI2Loader(), config);
-//		}
-//		else {
-//			throw new OpenCvJException("unknown ColorDepthComposite type=" + type);
-//		}
-//	}
-
-	public static BackgroundModel createBackgroundModel(ConfigNode config) {
-		BackgroundModel bgModel;
-		
-		String type = config.get("type").asString(null);
-		if ( type.equals("mvavg_depth") ) {
-			bgModel = MADepthBackgroundModel.create(config);
+	public static BackgroundModel getBackgroundModel(ConfigNode config) {
+		if ( config.isMap() ) {
+			String bgModelType = config.get("type").asString(null);
+			if ( bgModelType != null ) {
+				BackgroundModel model = BG_MODELS.get(bgModelType);
+				if ( model != null ) {
+					return model;
+				}
+			}
+			
+			BackgroundModel model = BackgroundModel.create(config);
+			BG_MODELS.putIfAbsent(bgModelType, model);
+			
+			return model;
 		}
-		else if ( type.equals("mvavg_color") ) {
-			bgModel = MAColorBackgroundModel.create(config);
+		else if ( config.isPrimitive() ) {
+			String bgModelType = config.asString();
+			BackgroundModel model = BG_MODELS.get(bgModelType);
+			if ( model != null ) {
+				return model;
+			}
+			else {
+				throw new OpenCvJException("unregistered BackgroundModel: type=" + bgModelType);
+			}
 		}
 		else {
-			throw new OpenCvJException("unknown BackgroundModel: type=" + type);
+			throw new IllegalArgumentException("invalid ConfigNode: config=" + config);
 		}
-		BG_MODELS.put(type, bgModel);
-		
-		return bgModel;
-	}
-	
-	public static BackgroundModel getBackgroundModel(ConfigNode config) {
-		ConfigNode bgModelConfig = config.get("bgmodel");
-		bgModelConfig = (bgModelConfig.isMissing()) ? config : bgModelConfig.asReference();
-		BackgroundModel bgModel = BG_MODELS.get(bgModelConfig.getPath());
-		if ( bgModel == null ) {
-			bgModel = createBackgroundModel(bgModelConfig);
-		}
-		
-		return bgModel;
 	}
 
 	public static ForegroundDetector createForegroundDetector(ConfigNode config) {

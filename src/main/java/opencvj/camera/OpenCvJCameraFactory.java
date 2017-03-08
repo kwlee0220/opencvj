@@ -2,6 +2,8 @@ package opencvj.camera;
 
 import org.opencv.core.Size;
 
+import utils.config.ConfigNode;
+
 
 /**
  * 
@@ -10,4 +12,13 @@ import org.opencv.core.Size;
 public interface OpenCvJCameraFactory {
 	public OpenCvJCamera createCamera();
 	public Size getSize();
+	
+	public static OpenCvJCameraFactory create(ConfigNode config) throws Exception {
+		OpenCvJCameraFactoryImpl cameraFact = new OpenCvJCameraFactoryImpl();
+		cameraFact.setSourceCamera(OpenCvJCamera.create(config));
+		cameraFact.setConfig(config);
+		cameraFact.initialize();
+		
+		return cameraFact;
+	}
 }

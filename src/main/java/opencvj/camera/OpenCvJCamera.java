@@ -5,6 +5,10 @@ import java.util.concurrent.TimeUnit;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
+import opencvj.OpenCvJException;
+import opencvj.OpenCvJSystem;
+import utils.config.ConfigNode;
+
 
 /**
  * 
@@ -45,5 +49,18 @@ public interface OpenCvJCamera extends AutoCloseable {
 		finally {
 			image.release();
 		}
+	}
+	
+	public static OpenCvJCamera create(ConfigNode config) throws Exception {
+		ConfigNode typeNode = config.get("type");
+		if ( typeNode.isMissing() ) {
+			throw new IllegalArgumentException("invalid OpenCvJCamera ConfigNode: no 'type' field, config=" + config);
+		}
+		
+		String type = typeNode.asString();
+		OpenCvJCameraLoader loader = OpenCvJSystem.getOpenCvJCameraLoader(type)
+													.orElseThrow(()->
+														new OpenCvJException("unknown camera type=" + type));
+		return loader.load(config);
 	}
 }

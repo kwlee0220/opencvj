@@ -48,7 +48,8 @@ public class OpenCvJCameraFactoryImpl implements OpenCvJCameraFactory, Initializ
 	@GuardedBy("m_factLock") private final List<SharedOpenCvJCamera> m_shareds
 														= new ArrayList<SharedOpenCvJCamera>();
 	
-	public static final OpenCvJCameraFactoryImpl create(OpenCvJCamera source, ConfigNode config) throws Exception {
+	public static final OpenCvJCameraFactoryImpl create(OpenCvJCamera source, ConfigNode config)
+		throws Exception {
 		OpenCvJCameraFactoryImpl fact = new OpenCvJCameraFactoryImpl();
 		fact.setSourceCamera(source);
 		fact.setConfig(config);
