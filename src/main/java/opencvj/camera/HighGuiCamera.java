@@ -7,6 +7,8 @@ import org.opencv.highgui.VideoCapture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import opencvj.OpenCvJException;
 import opencvj.OpenCvJLoader;
 import opencvj.OpenCvJUtils;
@@ -39,7 +41,7 @@ public class HighGuiCamera implements OpenCvJCamera, Initializable {
 	// properties (END)
 	
 	private Params m_params;
-	private VideoCapture m_capture;
+	private VideoCapture m_capture;	// 'null'이면 initialize되지 않은 것으로 간주
 	
 	public static HighGuiCamera create(OpenCvJLoader loader, ConfigNode config) throws Exception {
 		HighGuiCamera camera = new HighGuiCamera();
@@ -81,22 +83,25 @@ public class HighGuiCamera implements OpenCvJCamera, Initializable {
 			}
 			m_params = new Params(m_config);
 		}
-		m_capture = new VideoCapture();
 		
+		m_capture = new VideoCapture();
 		s_logger.info("initialized: {}", toString());
 	}
 
 	@Override
 	public void destroy() throws Exception {
 		close();
-	}
 
-	public OpenCvJLoader getOpenCvJLoader() {
-		return m_loader;
+		if ( m_capture != null ) {
+			m_capture.release();
+			m_capture = null;
+		}
 	}
 
 	@Override
 	public void open() {
+		Preconditions.checkState(m_capture != null, "not initialized: " + getClass());
+		
 		if ( m_capture.isOpened() ) {
 			throw new OpenCvJException(getClass().getSimpleName() + " already opened");
 		}
@@ -126,8 +131,11 @@ public class HighGuiCamera implements OpenCvJCamera, Initializable {
 			if ( m_capture.isOpened() ) {
 				m_capture.release();
 			}
-			m_capture = null;
 		}
+	}
+
+	public OpenCvJLoader getOpenCvJLoader() {
+		return m_loader;
 	}
 	
 	public Size getSize() {

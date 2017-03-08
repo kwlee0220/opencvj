@@ -5,9 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-
-import com.google.common.base.Preconditions;
 
 import opencvj.blob.AdaptiveImageThreshold;
 import opencvj.blob.BackgroundModel;
@@ -26,7 +23,10 @@ import opencvj.camera.ColorDepthCompositeFactory;
 import opencvj.camera.ColorDepthCompositeLoader;
 import opencvj.camera.HighGuiCamera;
 import opencvj.camera.OpenCvJCamera;
+import opencvj.camera.OpenCvJCameraFactory;
+import opencvj.camera.OpenCvJCameraFactoryImpl;
 import opencvj.camera.OpenCvJCameraLoader;
+import opencvj.camera.OpenCvJDepthCamera;
 import opencvj.features2d.ImageStore;
 import opencvj.features2d.ObjectTemplateStore;
 import opencvj.track.Backprojector;
@@ -145,13 +145,6 @@ public final class OpenCvJSystem {
 		CAMERA_LOADERS.remove(type);
 	}
 	
-	public static final Optional<OpenCvJCameraLoader> getOpenCvJCameraLoader(String type) {
-		Preconditions.checkNotNull(type, "OpenCvJCameraLoader type is null");
-		
-		OpenCvJCameraLoader loader = CAMERA_LOADERS.get(type);
-		return (loader != null) ? Optional.of(loader) : Optional.empty();
-	}
-	
 	public static final void registerCDCLoader(String type, ColorDepthCompositeLoader fact) {
 		CDC_LOADERS.put(type, fact);
 	}
@@ -166,6 +159,41 @@ public final class OpenCvJSystem {
 			return HighGuiCamera.create(getOpenCvJLoader(), config);
 		}
 	};
+	
+	public static OpenCvJCamera createOpenCvJCamera(ConfigNode config) throws Exception {
+		ConfigNode typeNode = config.get("type");
+		if ( typeNode.isMissing() ) {
+			throw new IllegalArgumentException("invalid OpenCvJCamera ConfigNode: no 'type' field, config=" + config);
+		}
+		
+		String type = typeNode.asString();
+		OpenCvJCameraLoader loader = CAMERA_LOADERS.get(type);
+		if ( loader != null ) {
+			return loader.load(config);
+		}
+		else {
+			throw new OpenCvJException("unregistered camera type=" + type);
+		}
+	}
+	
+	public static OpenCvJCameraFactory createOpenCvJCameraFactory(ConfigNode config) throws Exception {
+		OpenCvJCameraFactoryImpl cameraFact = new OpenCvJCameraFactoryImpl();
+		cameraFact.setSourceCamera(createOpenCvJCamera(config));
+		cameraFact.setConfig(config);
+		cameraFact.initialize();
+		
+		return cameraFact;
+	}
+	
+	public static OpenCvJDepthCamera createOpenCvJDepthCamera(ConfigNode config) throws Exception {
+		OpenCvJCamera camera = createOpenCvJCamera(config);
+		if ( camera instanceof OpenCvJDepthCamera ) {
+			return (OpenCvJDepthCamera)camera;
+		}
+		else {
+			throw new IllegalArgumentException("not OpenCvJDepthCamera, config=" + config);
+		}
+	}
 	
 	public static final ColorDepthCompositeFactory createCDCFactory(ConfigNode config)
 		throws Exception {

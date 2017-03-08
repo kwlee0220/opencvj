@@ -68,6 +68,10 @@ public class OpenCvBeamProjector extends SwingBeamProjector {
 		
 		m_size = OpenCvJUtils.toCvSize(getScreenSize());
 	}
+	
+	public Size getSize() {
+		return m_size;
+	}
 
 	@Override
 	public void show(Image image) {
@@ -80,9 +84,5 @@ public class OpenCvBeamProjector extends SwingBeamProjector {
 
 	public void show(MatConvas convas) {
 		show(convas.getMat());
-	}
-	
-	public Size getSize() {
-		return m_size;
 	}
 }
