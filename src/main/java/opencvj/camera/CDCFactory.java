@@ -2,6 +2,7 @@ package opencvj.camera;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
@@ -12,12 +13,12 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
 import net.jcip.annotations.GuardedBy;
-import utils.CheckedSupplier;
 import utils.Initializable;
+import utils.Unchecked.CheckedSupplier;
 import utils.UninitializedException;
-import utils.Utilities;
 import utils.config.ConfigNode;
 import utils.io.IOUtils;
+import utils.stream.FStream;
 import utils.thread.ExecutorAware;
 import utils.thread.InterThreadShareSupplier;
 
@@ -132,13 +133,8 @@ public class CDCFactory implements ColorDepthCompositeFactory, ExecutorAware, In
 		
 		// close all the spawned camera and wait until they are closed
 		//
-		Utilities.runAsync(()->{
-			for ( SharedCDC shared: shareds ) {
-				try {
-					shared.close();
-				}
-				catch ( Exception ignored ) { }
-			}
+		CompletableFuture.runAsync(()-> {
+			FStream.of(shareds).forEachIE(AutoCloseable::close);
 		}, m_executor);
 
 		m_factLock.lock();

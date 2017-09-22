@@ -7,7 +7,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
 import opencvj.OpenCvJException;
-import utils.ExceptionUtils;
+import utils.Throwables;
 
 
 /**
@@ -59,7 +59,7 @@ class SharedCDC implements ColorDepthComposite {
 			comp.m_depthImage.copyTo(depthImage);
 		}
 		catch ( ExecutionException e ) {
-			Throwable cause = ExceptionUtils.unwrapThrowable(e);
+			Throwable cause = Throwables.unwrapThrowable(e);
 			throw new OpenCvJException("sync-capture failed: cause=" + cause);
 		}
 		catch ( InterruptedException | TimeoutException e ) {

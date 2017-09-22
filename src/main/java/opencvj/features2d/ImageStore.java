@@ -138,7 +138,7 @@ public class ImageStore implements Initializable {
 				s_logger.warn("fails to load image file: " + e.imageFile);
 				continue;
 			}
-			String cornerStr = XmlUtils.getChildElementText(imageElm, "corners").orElse(null);
+			String cornerStr = XmlUtils.getChildElementText(imageElm, "corners").getOrNull();
 			if ( cornerStr != null ) {
 				String[] numbers = cornerStr.trim().split(" ");
 				e.corners = new Point[numbers.length/2];
