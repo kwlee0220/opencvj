@@ -14,9 +14,10 @@ import org.opencv.core.Size;
 
 import net.jcip.annotations.GuardedBy;
 import utils.Initializable;
-import utils.Unchecked.CheckedSupplier;
 import utils.UninitializedException;
 import utils.config.ConfigNode;
+import utils.func.CheckedSupplier;
+import utils.func.Unchecked;
 import utils.io.IOUtils;
 import utils.stream.FStream;
 import utils.thread.ExecutorAware;
@@ -134,7 +135,7 @@ public class CDCFactory implements ColorDepthCompositeFactory, ExecutorAware, In
 		// close all the spawned camera and wait until they are closed
 		//
 		CompletableFuture.runAsync(()-> {
-			FStream.from(shareds).forEachIE(AutoCloseable::close);
+			FStream.from(shareds).forEach(Unchecked.liftIE(AutoCloseable::close));
 		}, m_executor);
 
 		m_factLock.lock();
