@@ -100,7 +100,7 @@ public class OpenCvJCameraFactoryImpl implements OpenCvJCameraFactory, Initializ
 	public void destroy() {
 		// close all the spawned camera and wait until they are closed
 		//
-		Utilities.executeAsynchronously(m_executor, new Runnable() {
+		Utilities.runAsync(m_executor, new Runnable() {
 			@Override
 			public void run() {
 				List<SharedOpenCvJCamera> shareds = new ArrayList<SharedOpenCvJCamera>();
