@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.annotation.concurrent.GuardedBy;
+
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -21,7 +23,6 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
-import net.jcip.annotations.GuardedBy;
 import opencvj.MatConvas;
 import opencvj.Mats;
 import opencvj.OpenCvJ;

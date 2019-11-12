@@ -7,11 +7,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.annotation.concurrent.GuardedBy;
+
 import org.apache.log4j.Logger;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
-import net.jcip.annotations.GuardedBy;
 import utils.Initializable;
 import utils.UninitializedException;
 import utils.UnitUtils;

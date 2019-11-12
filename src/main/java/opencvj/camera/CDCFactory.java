@@ -9,10 +9,11 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.annotation.concurrent.GuardedBy;
+
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
-import net.jcip.annotations.GuardedBy;
 import utils.Initializable;
 import utils.UninitializedException;
 import utils.config.ConfigNode;
