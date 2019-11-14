@@ -136,7 +136,7 @@ public class CDCFactory implements ColorDepthCompositeFactory, ExecutorAware, In
 		// close all the spawned camera and wait until they are closed
 		//
 		CompletableFuture.runAsync(()-> {
-			FStream.from(shareds).forEach(Unchecked.liftIE(AutoCloseable::close));
+			FStream.from(shareds).forEach(Unchecked.ignore(AutoCloseable::close));
 		}, m_executor);
 
 		m_factLock.lock();
