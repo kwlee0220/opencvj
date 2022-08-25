@@ -18,7 +18,7 @@ import utils.Initializable;
 import utils.UninitializedException;
 import utils.config.ConfigNode;
 import utils.func.CheckedSupplier;
-import utils.func.Unchecked;
+import utils.func.UncheckedConsumer;
 import utils.io.IOUtils;
 import utils.stream.FStream;
 import utils.thread.ExecutorAware;
@@ -136,7 +136,7 @@ public class CDCFactory implements ColorDepthCompositeFactory, ExecutorAware, In
 		// close all the spawned camera and wait until they are closed
 		//
 		CompletableFuture.runAsync(()-> {
-			FStream.from(shareds).forEach(Unchecked.ignore(AutoCloseable::close));
+			FStream.from(shareds).forEach(UncheckedConsumer.ignore(AutoCloseable::close));
 		}, m_executor);
 
 		m_factLock.lock();
