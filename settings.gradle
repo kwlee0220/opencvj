@@ -1,8 +1,9 @@
 rootProject.name = 'opencvj'
 
-['utils','event', 'async','planet'].each {
+ext.common_dir = '../../common'
+['utils', 'utilsx', 'event', 'async','planet'].each {
 	include ":$it"
-	project(":$it").projectDir = file("../../common/$it")
+	project(":$it").projectDir = file("$common_dir/$it")
 }
 ['camus.model', 'etri.services'].each {
 	include ":$it"
